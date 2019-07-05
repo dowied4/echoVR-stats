@@ -5,7 +5,7 @@ import Axios from 'axios';
 class Home extends Component {
 	constructor(props) {
 		super(props);
-		this.state = { 
+		this.state = {
 			loading: true,
 			matchData: null,
 		 }
@@ -15,17 +15,18 @@ class Home extends Component {
 	getMatch() {
 		Axios.get('/session')
 		.then(result => {
-			const test = JSON.parse(result.data.replace(/\0.*$/g,''));
-			console.log(test)
-			this.setState({
-				loading: false,
-				matchData: test
-			})
+			const res = JSON.parse(result.data.replace(/\0.*$/g,''));
+			if(res.game_status === "playing") {
+				this.setState({
+					loading: false,
+					matchData: res
+				})
+			}
 		})
 		.catch((err) => {console.log(err)});
 	}
 	componentDidMount() {
-		this.interval = setInterval(() => this.getMatch(), 1000);
+		this.interval = setInterval(() => this.getMatch(), 500);
 	}
 
 	componentWillUnmount() {
@@ -40,23 +41,48 @@ class Home extends Component {
 				</Dimmer>
 			);
 		} else {
-			return ( 
-				<Grid divided="vertically">
-					<Icon name="check circle"/> 
+			return (
+				<Grid className="main-page" textAlign={'center'} verticalAlign={'middle'} padded={true}>
 					<Grid.Row columns={2}>
 						<Grid.Column>
-							<Header>Blue Team</Header>
+							<Header>{this.state.matchData.teams[0].team}</Header>
 						</Grid.Column>
 						<Grid.Column>
-							<Header>Orange Team</Header>
+							<Header>{this.state.matchData.teams[1].team}</Header>
 						</Grid.Column>
 					</Grid.Row>
 					<Grid.Row columns={2}>
 						<Grid.Column>
-							{this.state.matchData.teams[0].posession ? "MINE" : <></>}
+							<Grid textAlign={'center'} verticalAlign={'middle'} padded={true}>
+								{this.state.matchData.teams[0].players.map( player => {
+									return (
+										<Grid.Row columns={2}>
+											<Grid.Column>
+												<Header>{player.name}</Header>
+											</Grid.Column>
+											<Grid.Column>
+												{player.possession ? <Icon color="green" name="check circle"/>:<></>}
+											</Grid.Column>
+										</Grid.Row>
+									);
+								} )}
+							</Grid>
 						</Grid.Column>
 						<Grid.Column>
-							{this.state.matchData.teams[1].posession ? "MINE" : <></>}
+							<Grid textAlign={'center'} verticalAlign={'middle'} padded={true}>
+								{this.state.matchData.teams[1].players.map( player => {
+									return (
+										<Grid.Row columns={2}>
+											<Grid.Column>
+												<Header>{player.name}</Header>
+											</Grid.Column>
+											<Grid.Column>
+												{player.possession ? <Icon color="green" name="check circle"/>:<></>}
+											</Grid.Column>
+										</Grid.Row>
+									);
+								} )}
+							</Grid>
 						</Grid.Column>
 					</Grid.Row>
 				</Grid> 

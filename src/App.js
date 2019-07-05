@@ -1,7 +1,6 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { getMatch } from './Utility/apiConnect';
 import Home from './Home';
 
 
