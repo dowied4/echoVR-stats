@@ -1,13 +1,19 @@
 import React from 'react';
-import logo from './logo.svg';
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import './App.css';
-import Home from './Home';
+import Home from './Screens/Home';
+import Roster from './Screens/Roster';
 
 
 function App() {
   return (
     <div className="App">
-        <Home/>
+        <BrowserRouter>
+          <Switch>
+            <Route exact path='/' component={Home}/>
+            <Route path="/roster/:id" component={Roster}/>
+          </Switch>
+        </BrowserRouter>
     </div>
   );
 }
